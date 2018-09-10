@@ -95,7 +95,7 @@ class ApplicationApiSpec extends FlatSpec with Matchers {
       Map(productId -> product),
       Map(customerId -> customer))
 
-    val found: StateMonad[Either[Seq[DomainError], Seq[Product]]] = api.findProduct(customerId, product.name.substring(2, 4))
+    val found: StateMonad[Either[NoCustomer.type, Seq[Product]]] = api.findProduct(customerId, product.name.substring(2, 4))
     val (finalState, executionResult) = found.run(state).value
 
     //check execution results
@@ -110,7 +110,7 @@ class ApplicationApiSpec extends FlatSpec with Matchers {
       Map(productId -> product),
       Map(customerId -> customer))
 
-    val found: StateMonad[Either[Seq[DomainError], Seq[Product]]] = api.findProduct(customerId, "no such product")
+    val found: StateMonad[Either[NoCustomer.type, Seq[Product]]] = api.findProduct(customerId, "no such product")
     val (finalState, executionResult) = found.run(state).value
 
     //check execution results
@@ -125,11 +125,11 @@ class ApplicationApiSpec extends FlatSpec with Matchers {
       Map(productId -> product),
       Map.empty)
 
-    val found: StateMonad[Either[Seq[DomainError], Seq[Product]]] = api.findProduct(customerId, "no such product")
+    val found: StateMonad[Either[NoCustomer.type, Seq[Product]]] = api.findProduct(customerId, "no such product")
     val (finalState, executionResult) = found.run(state).value
 
     //check execution results
-    executionResult shouldBe Left(List(NoCustomer))
+    executionResult shouldBe Left(NoCustomer)
 
     //check DB
     finalState shouldBe state
@@ -151,7 +151,7 @@ class ApplicationApiSpec extends FlatSpec with Matchers {
     implicit val purchases: Purchases[StateMonad] = new Purchases[StateMonad]
     implicit val customerEmails: CustomerEmails[StateMonad] = new CustomerEmails[StateMonad]
 
-    val api = new ApplicationApi[StateMonad, StateMonad]
+    val api = new ApplicationApi[StateMonad, StateMonad, StateMonad]
   }
 
 }
