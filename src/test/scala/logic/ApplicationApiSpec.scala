@@ -2,7 +2,7 @@ package logic
 
 import java.util.UUID
 
-import boilerplate.Bridge
+import boilerplate.NaturalTransformation
 import domain._
 import interfaces._
 import logic.AlgebraTest._
@@ -146,7 +146,7 @@ class ApplicationApiSpec extends FlatSpec with Matchers {
     implicit val customers: Customers[StateMonad] = new CustomersState
     implicit val products: Products[StateMonad] = new ProductsState
     implicit val emails: Emails[StateMonad] = new EmailsState
-    implicit val bridge: Bridge[StateMonad, StateMonad] = new BridgeState
+    implicit val bridge: NaturalTransformation[StateMonad, StateMonad] = new NaturalTransformationState
 
     implicit val purchases: Purchases[StateMonad] = new Purchases[StateMonad]
     implicit val customerEmails: CustomerEmails[StateMonad] = new CustomerEmails[StateMonad]

@@ -2,8 +2,8 @@ package logic
 
 import java.util.UUID
 
-import boilerplate.Bridge
-import boilerplate.Bridge._
+import boilerplate.NaturalTransformation
+import boilerplate.NaturalTransformation._
 import cats.Monad
 import cats.syntax.flatMap._
 import cats.syntax.functor._
@@ -16,7 +16,7 @@ import logic.Purchases._
 
 import scala.language.higherKinds
 
-class ApplicationApi[F[_]: Monad: Purchases: Customers: Products, H[_]: Monad: CustomerEmails, R[_]: Monad](implicit fr: Bridge[F, R], hr: Bridge[H, R]) {
+class ApplicationApi[F[_]: Monad: Purchases: Customers: Products, H[_]: Monad: CustomerEmails, R[_]: Monad](implicit fr: NaturalTransformation[F, R], hr: NaturalTransformation[H, R]) {
 
   def findProduct(customerId: UUID, name: String): R[Either[NoCustomer.type, Seq[Product]]] = {
     type resultType = Either[NoCustomer.type, Seq[Product]]
@@ -27,7 +27,7 @@ class ApplicationApi[F[_]: Monad: Purchases: Customers: Products, H[_]: Monad: C
     }
 
     //translate combination
-    translate(result): R[resultType]
+    transform(result): R[resultType]
   }
 
   def makePurchase(customerId: UUID, productId: UUID): R[Either[Seq[DomainError], Seq[EmailType]]] = {
@@ -41,8 +41,8 @@ class ApplicationApi[F[_]: Monad: Purchases: Customers: Products, H[_]: Monad: C
     val send: Customer => H[emailType] = c => sendPurchaseEmail(c).map(emails => Right(emails))
 
     //combine
-    val result: R[resultType] = translate(purchase).flatMap {
-      case Right((c, _)) => translate(send(c))
+    val result: R[resultType] = transform(purchase).flatMap {
+      case Right((c, _)) => transform(send(c))
       case Left(e)       => Monad[R].pure(Left(e): resultType)
     }
 

@@ -68,8 +68,8 @@ object AlgebraTest {
     def sendEmail(customer: String, email: EmailType): State[TestState, EmailType] = State(state => (state, email))
   }
 
-  class BridgeState extends Bridge[StateMonad, StateMonad] {
-    def translate[A](f: State[TestState, A]): State[TestState, A] = f
+  class NaturalTransformationState extends NaturalTransformation[StateMonad, StateMonad] {
+    def transform[A](f: State[TestState, A]): State[TestState, A] = f
   }
 }
 
