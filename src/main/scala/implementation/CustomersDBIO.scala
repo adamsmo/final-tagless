@@ -8,7 +8,7 @@ import slick.jdbc.H2Profile.api._
 
 import scala.concurrent.ExecutionContext
 
-class CustomersDBIO(implicit db: DB, ec: ExecutionContext) extends Customers[DBIO] {
+class CustomersDBIO(implicit ec: ExecutionContext) extends Customers[DBIO] {
   override def updateCustomer(c: Customer): DBIO[Option[Customer]] =
     (for {
       updateCount <- DB.customers.filter(_.id === c.id).update(c.id, c.email)

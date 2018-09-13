@@ -68,7 +68,7 @@ class ProductsDBIOSpec extends DBIOSpec {
   }
 
   trait Context {
-    implicit val database: DB = new DB()
+    val database: DB = new DB()
     val db = database.db
 
     val setup: Future[Unit] = database.setUpDB()

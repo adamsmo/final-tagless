@@ -8,7 +8,7 @@ import slick.jdbc.H2Profile.api._
 
 import scala.concurrent.ExecutionContext
 
-class ProductsDBIO(implicit db: DB, ec: ExecutionContext) extends Products[DBIO] {
+class ProductsDBIO(implicit ec: ExecutionContext) extends Products[DBIO] {
   override def getProduct(id: UUID): DBIO[Option[Product]] =
     DB.products
       .filter(_.id === id)
