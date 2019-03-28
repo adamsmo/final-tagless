@@ -38,12 +38,14 @@ class ApplicationApi[F[_]: Monad: Purchases: Customers: Products, H[_]: Monad: C
 
     //call what you want from different domains
     val purchase: F[purchaseType] = purchaseProduct(customerId, productId)
-    val send: Customer => H[emailType] = c => sendPurchaseEmail(c).map(emails => Right(emails))
 
     //combine
     val result: R[resultType] = transform(purchase).flatMap {
-      case Right((c, _)) => transform(send(c))
-      case Left(e)       => Monad[R].pure(Left(e): resultType)
+      case Right((c, _)) =>
+        val pe: H[emailType] = sendPurchaseEmail(c).map(emails => Right(emails))
+        transform(pe)
+      case Left(e) =>
+        Monad[R].pure(Left(e): resultType)
     }
 
     result
